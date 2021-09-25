@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Example - Register</title>
+    <meta name="description" content="SQLite3 with Sequelize example starter" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+  </head>
+  <body>
+    <header>
+      <h1>Register</h1>
+    </header>
+
+    <main>
+      <% if (error) { %>
+      <p style="color: red"><%= error %></p>
+      <% } %>
+      <form
+        action="/register"
+        method="POST"
+        enctype="application/x-www-form-urlencoded"
+        style="display: flex; flex-direction: column; width: 50%"
+      >
+        <input
+          name="username"
+          type="text"
+          maxlength="25"
+          value="<%=username%>"
+          placeholder="Username"
+        />
+        <input
+          name="name"
+          type="text"
+          maxlength="25"
+          value="<%=name%>"
+          placeholder="Display Name"
+        />
+        <input
+          name="password"
+          type="password"
+          value=""
+          placeholder="Password"
+        />
+        <input
+          name="confirmpassword"
+          type="password"
+          value=""
+          placeholder="Confirm Password"
+        />
+        <button type="submit">Create an account</button>
+      </form>
+      <p>Already have an account? <a href="/">Login</a></p>
+    </main>
+  </body>
+</html>

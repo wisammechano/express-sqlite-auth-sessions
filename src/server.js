@@ -1,10 +1,13 @@
 // init project
 const express = require("express");
 const sessions = require("express-session");
+const passport = require("passport");
+
 const path = require("path");
 
 const indexRouter = require("./routes");
 const { sequelize } = require("./db");
+require("./auth")();
 
 // Init our express app
 const app = express();
@@ -27,6 +30,18 @@ app.use(
     cookie: { secure: false }, // make sure to change this to true on production code
   })
 );
+
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.authenticate("session"));
+
+app.use(function (req, res, next) {
+  var msgs = req.session.messages || [];
+  res.locals.messages = msgs;
+  res.locals.hasMessages = !!msgs.length;
+  req.session.messages = [];
+  next();
+});
 
 // Using urlencoded parser to parse application/x-www-form-urlencoded form data
 app.use(express.urlencoded({ extended: false }));

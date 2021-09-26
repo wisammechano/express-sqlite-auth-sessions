@@ -1,4 +1,4 @@
-const { UniqueConstraintError, Model } = require("sequelize");
+const { Model } = require("sequelize");
 const bcrypt = require("bcrypt");
 
 class User extends Model {
@@ -47,7 +47,13 @@ class User extends Model {
   static async register(username, name, password) {
     // check password length and strength
     if (password.length < 8) {
-      return { error: "Password should be 8 characters or more", user: null };
+      throw new Error("Password should be 8 characters or more");
+    }
+
+    // check username exists
+    const exists = await User.findOne({ where: { username } });
+    if (exists) {
+      throw new Error(`Username ${username} already exists.`);
     }
 
     const hashed = await User.hash(password);
@@ -65,17 +71,10 @@ class User extends Model {
 
       delete record.hashed_password; // this is deleted so it is not passed down
 
-      return { error: null, user: record };
+      return record; //return the created user
     } catch (error) {
-      // Here we handle duplicate username error
-      if (error instanceof UniqueConstraintError) {
-        const { path, type, message } = error.errors[0];
-        if (path === "username" && type === "unique violation") {
-          return { error: `Username ${username} already exists.`, user: null };
-        }
-        return { error: message, user: null };
-      }
-      return { error, user: null };
+      // Here we handle duplicate and constraints errors on from database
+      throw error;
     }
   }
 

@@ -53,17 +53,18 @@ router.post("/register", async (req, res) => {
   }
 
   // Create user
-  const { error, user } = await User.register(username, name, password);
-  if (error) {
-    res.status(400).render("register", {
-      error,
-      username,
-      name,
+  User.register(username, name, password)
+    .then((user) => {
+      req.session.user = user;
+      res.status(201).redirect("/");
+    })
+    .catch((error) => {
+      res.status(400).render("register", {
+        error: error.message,
+        username,
+        name,
+      });
     });
-  } else {
-    req.session.user = user;
-    res.status(201).redirect("/");
-  }
 });
 
 module.exports = router;
